@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="google-site-verification" content="T3W5juVTjd_LCSzzlewPS_wxTKiOVGeSOWgm8D9BCWk">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Implementé un agente de IA persistente en un Discord Bot y decidí dejar de restringir con reglas | Registro de operación de Staff AI dot mode | PEXServer Blog</title>
+<meta name="description" content="De un bot que solo responde cuando es llamado a una IA que reside en la conversación y decide participar por sí misma. Razones para diseñar el sistema para que el modelo lea el contexto, eliminando todos los tiempos de espera fijos y desencadenadores condicionales, y la experiencia operativa.">
+<link rel="canonical" href="https://blog.pexserver.com/es/posts/2026-11-20-staff-ai-dot/">
+<link rel="icon" type="image/webp" href="/assets/logo.webp">
+<meta property="og:title" content="Implementé un agente de IA persistente en un Discord Bot y decidí dejar de restringir con reglas | Registro de operación de Staff AI dot mode | PEXServer Blog">
+<meta property="og:description" content="De un bot que solo responde cuando es llamado a una IA que reside en la conversación y decide participar por sí misma. Razones para diseñar el sistema para que el modelo lea el contexto, eliminando todos los tiempos de espera fijos y desencadenadores condicionales, y la experiencia operativa.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.pexserver.com/es/posts/2026-11-20-staff-ai-dot/">
+<meta property="og:image" content="https://blog.pexserver.com/assets/logo.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Implementé un agente de IA persistente en un Discord Bot y decidí dejar de restringir con reglas | Registro de operación de Staff AI dot mode | PEXServer Blog">
+<meta name="twitter:description" content="De un bot que solo responde cuando es llamado a una IA que reside en la conversación y decide participar por sí misma. Razones para diseñar el sistema para que el modelo lea el contexto, eliminando todos los tiempos de espera fijos y desencadenadores condicionales, y la experiencia operativa.">
+<meta name="twitter:image" content="https://blog.pexserver.com/assets/logo.webp">
+<link rel="alternate" hreflang="ja" href="https://blog.pexserver.com/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="en" href="https://blog.pexserver.com/en/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="zh" href="https://blog.pexserver.com/zh/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="ko" href="https://blog.pexserver.com/ko/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="es" href="https://blog.pexserver.com/es/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="x-default" href="https://blog.pexserver.com/posts/2026-11-20-staff-ai-dot/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Implementé un agente de IA persistente en un Discord Bot y decidí dejar de restringir con reglas | Registro de operación de Staff AI dot mode","description":"De un bot que solo responde cuando es llamado a una IA que reside en la conversación y decide participar por sí misma. Razones para diseñar el sistema para que el modelo lea el contexto, eliminando todos los tiempos de espera fijos y desencadenadores condicionales, y la experiencia operativa.","datePublished":"2026-11-20","dateModified":"2026-11-20","author":{"@type":"Person","name":"koukunn","image":"https://api.pexserver.com/auth/icon/koukunn?v=1795152063301"},"image":"https://blog.pexserver.com/assets/logo.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.pexserver.com/es/posts/2026-11-20-staff-ai-dot/"},"url":"https://blog.pexserver.com/es/posts/2026-11-20-staff-ai-dot/","inLanguage":"es","publisher":{"@type":"Organization","name":"PEXServer Blog","url":"https://blog.pexserver.com"}}</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5289532251579539" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light;--bg:#faf6ed;--panel:#fffcf6;--ink:#25282e;--muted:#68676a;--line:#dcdacf;--accent:#a7472b;--brand:#0b57d0;--radius:12px}
+*{box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;line-height:1.8}
+a{color:var(--brand)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px}
+/* header: title in the primary area (top-left), quiet nav top-right */
+header.site{border-bottom:1px solid var(--line);background:var(--panel)}
+header.site .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-top:18px;padding-bottom:16px;flex-wrap:wrap}
+.brandbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brandbox .logo-img{width:34px;height:34px;border-radius:9px;object-fit:cover;display:block;flex-shrink:0}
+.brandbox a.logo{color:var(--ink);text-decoration:none;font-weight:800;font-size:24px;letter-spacing:.02em}
+.brandbox a.logo span{color:var(--accent)}
+.brandbox p{color:var(--muted);margin:2px 0 0;font-size:13px;flex-basis:100%}
+nav.quiet{display:flex;gap:16px;font-size:13px;align-items:center;flex-wrap:wrap}
+nav.quiet a{color:var(--muted);text-decoration:none}
+nav.quiet a:hover{color:var(--accent)}
+/* language switcher (top-right) */
+.langswitch{position:relative;font-size:13px}
+.langswitch-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
+.langswitch-btn:hover{border-color:var(--accent)}
+.langswitch-btn .lang-self{color:var(--muted);font-weight:400;font-size:12px}
+.langswitch-menu{position:absolute;right:0;top:calc(100% + 6px);margin:0;padding:6px;min-width:232px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(37,40,46,.12);list-style:none;display:none;z-index:40}
+.langswitch.open .langswitch-menu{display:block}
+.langswitch-menu li .lang-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:13px}
+.langswitch-menu li a.lang-item:hover{background:var(--bg)}
+.langswitch-menu .lang-flag{font-size:17px;line-height:1}
+.langswitch-menu .lang-self{margin-left:auto;color:var(--muted);font-size:12px}
+.langswitch-menu li .lang-item.disabled{opacity:.45;cursor:not-allowed}
+main{padding:28px 0 8px}
+/* Gutenberg hero: featured post (primary, top-left) + quiet side box (top-right) */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:20px;align-items:stretch;margin-bottom:8px}
+@media (max-width:760px){.hero{grid-template-columns:1fr}}
+.sidebox{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.sidebox h3{margin:0 0 8px;font-size:13px;color:var(--accent);letter-spacing:.08em}
+.sidebox ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+.sidebox a{text-decoration:none}
+/* post cards flow diagonally down from the primary area */
+.post-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:0 0 16px}
+.post-card h2{margin:4px 0 6px;font-size:19px;line-height:1.5}
+.post-card h2 a{color:var(--ink);text-decoration:none}
+.post-card h2 a:hover{color:var(--accent)}
+.post-card p{color:var(--muted);margin:6px 0 0}
+.post-card.featured{border:2px solid var(--accent);padding:26px 28px}
+.post-card.featured h2{font-size:26px}
+.post-card.featured .kicker{color:var(--accent);font-weight:700;font-size:12px;letter-spacing:.12em}
+.meta{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:0 10px;font-size:12px;color:var(--muted);text-decoration:none;background:var(--panel)}
+.tag:hover{border-color:var(--accent);color:var(--accent)}
+.byline{display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-weight:600}
+.avatar{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;line-height:1}
+.avatar-img{width:22px;height:22px;border-radius:50%;object-fit:cover;display:inline-block}
+/* terminal area: strong CTA block in the bottom-right */
+.terminal{margin:36px 0 8px auto;max-width:520px;background:var(--ink);color:#faf6ed;border-radius:var(--radius);padding:22px 24px;text-align:left}
+.terminal h3{margin:0 0 6px;font-size:17px}
+.terminal p{margin:0 0 14px;color:#cfcbc2;font-size:13px}
+.terminal .cta-row{display:flex;gap:10px;flex-wrap:wrap}
+.terminal a.cta{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px}
+.terminal a.cta.sub{background:transparent;border:1px solid #faf6ed;color:#faf6ed}
+footer.site{border-top:1px solid var(--line);margin-top:28px}
+footer.site .wrap{padding-top:16px;padding-bottom:24px;color:var(--muted);font-size:13px}
+/* article page: title/byline in the primary area, content column below */
+article{max-width:760px}
+article h1{font-size:28px;line-height:1.45;margin:10px 0 6px}
+article h2{border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:38px}
+article img{max-width:100%;border-radius:8px}
+article table{border-collapse:collapse;background:var(--panel)}
+article th,article td{border:1px solid var(--line);padding:6px 10px}
+article code{background:#f0ead9;padding:2px 5px;border-radius:4px}
+article pre{background:var(--ink);color:#faf6ed;padding:14px;border-radius:8px;overflow:auto}
+article pre code{background:transparent;padding:0}
+article blockquote{border-left:4px solid var(--accent);margin:16px 0;padding:4px 16px;color:var(--muted);background:var(--panel)}
+/* Reserve space for every ad slot (AdSense and house ads share this frame)
+   so the article text does not jump when the creative loads (CLS). */
+.ad{margin:28px 0;border:1px dashed var(--accent);border-radius:var(--radius);padding:14px 16px;background:var(--panel);min-height:250px;display:flex;align-items:center;justify-content:center}
+.ad-house{flex-direction:column;gap:8px;text-align:center}
+.ad-house a{color:var(--ink);text-decoration:none;display:block}
+.ad-house span{display:block;color:var(--muted);font-size:13px}
+.ad-label{font-size:11px;color:var(--accent);letter-spacing:.1em;font-weight:700}
+.page-title{font-size:24px;margin:0 0 18px}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap"><div class="brandbox"><img class="logo-img" src="/assets/logo.webp" alt="PEXServer Blog"><a class="logo" href="/es/">PEXServer <span>Blog</span></a><p>Mediciones y registros de servidores domésticos, LLM locales y desarrollo de mods de Minecraft.</p></div><nav class="quiet"><a href="https://pexserver.com">pexserver.com</a><a href="/rss.xml">RSS</a><div class="langswitch"><button type="button" class="langswitch-btn" aria-haspopup="true" aria-expanded="false" aria-label="Cambiar idioma / Change language">🇪🇸 <span>Español</span> <span aria-hidden="true">▾</span></button><ul class="langswitch-menu"><li><a href="/posts/2026-11-20-staff-ai-dot/" data-lang="ja" hreflang="ja" class="lang-item"><span class="lang-flag">🇯🇵</span><span class="lang-name">Japonés</span></a></li><li><a href="/en/posts/2026-11-20-staff-ai-dot/" data-lang="en" hreflang="en" class="lang-item"><span class="lang-flag">🇺🇸</span><span class="lang-name">Inglés</span></a></li><li><a href="/zh/posts/2026-11-20-staff-ai-dot/" data-lang="zh" hreflang="zh" class="lang-item"><span class="lang-flag">🇨🇳</span><span class="lang-name">Chino</span></a></li><li><a href="/ko/posts/2026-11-20-staff-ai-dot/" data-lang="ko" hreflang="ko" class="lang-item"><span class="lang-flag">🇰🇷</span><span class="lang-name">Coreano</span></a></li><li><a href="/es/posts/2026-11-20-staff-ai-dot/" data-lang="es" hreflang="es" class="lang-item"><span class="lang-flag">🇪🇸</span><span class="lang-name">Español</span></a></li></ul></div></nav></div></header>
+<main><div class="wrap">
+<article>
+<p class="meta"><span>2026-11-20</span><span class="byline"><img class="avatar-img" src="https://api.pexserver.com/auth/icon/koukunn?v=1795152063301" alt="koukunn"><span class="byline-name">koukunn</span></span><span><a class="tag" href="/es/tags/Discord/">Discord</a> <a class="tag" href="/es/tags/Desarrollo%20de%20bots/">Desarrollo de bots</a> <a class="tag" href="/es/tags/Local%20LLM/">Local LLM</a> <a class="tag" href="/es/tags/Agente%20de%20IA/">Agente de IA</a> <a class="tag" href="/es/tags/Operaci%C3%B3n/">Operación</a></span></p>
+<h1>Implementé un agente de IA persistente en un Discord Bot y decidí dejar de restringir con reglas | Registro de operación de Staff AI dot mode</h1>
+<div class="ad ad-house ad-top"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>Portal oficial de PEXServer</strong><span>Aquí está el portal para servidores domésticos, LLM locales y desarrollo de mods de Minecraft</span></a></div>
+<h2 id="sec-1">Conclusión primero</h2>
+<ul>
+<li>El AI del Discord Bot casero se reestructuró de &quot;responder cuando es llamado&quot; a &quot;permanecer activo y decidir si participar&quot;.</li>
+<li>La detección de participación, reacciones y llamadas no está limitada por reglas o tiempos de espera fijos, sino que <strong>se basa en que el modelo lea la conversación más reciente para tomar la decisión</strong>.</li>
+<li>Incluso a los humanos les molesta ser interrumpidos sin leer el flujo de la conversación. Pedirle lo mismo al AI resultó ser más natural.</li>
+</ul>
+<h2 id="sec-2">El Bot original era de &quot;respuesta a comandos&quot;</h2>
+<p>Originalmente, el que estaba en funcionamiento era un Bot normal que respondía a comandos o menciones. Esto es útil, pero en un servidor de charla, se convierte en una &quot;herramienta dejada&quot; en lugar de un &quot;participante en la conversación&quot;.</p>
+<p>El objetivo era ser una entidad que reside en el servidor, lee el ambiente y ocasionalmente interviene o reacciona, como los agentes persistentes (tipo dot) que se ven a menudo últimamente.</p>
+<h2 id="sec-3">Implementación</h2>
+<p>En modo persistente, el Bot pasa las 25 conversaciones más recientes al modelo y le pide que elija entre &quot;Responder / Comentar brevemente / Reaccionar / No hacer nada&quot;. El umbral se basa en la autoevaluación del modelo, configurando las respuestas en un nivel alto y las reacciones en un nivel bajo.</p>
+<p>El punto clave es que <strong>no escribimos las condiciones de participación en el código</strong>. En el diseño inicial, pensamos en reglas como &quot;una vez cada X minutos&quot; o &quot;si hay esta palabra clave&quot;, pero lo descartamos todo. La charla humana no funciona con tales reglas, y forzar la participación con reglas siempre parece mecánico.</p>
+<h2 id="sec-4">Lo que aprendí al intentarlo</h2>
+<h3 id="sec-5">La lectura del contexto es más capaz de lo esperado</h3>
+<p>Si proporciono 25 contextos, puedo hacer juicios como &quot;no intervenir porque dos personas están teniendo una conversación seria&quot; o &quot;tomar el tema porque se mencionó&quot;, con bastante precisión. Por el contrario, si reduzco el contexto a unos 5 elementos, inmediatamente se vuelve irrelevante. <strong>Si quieres aumentar la precisión de la detección, primero amplía el contexto proporcionado</strong>. Esto es igual en sistemas de juicio como la detección de spam; si quieres evitar omisiones, ampliar el alcance fue la respuesta correcta.</p>
+<h3 id="sec-6">Si limitas el presupuesto de tokens, se rompe silenciosamente</h3>
+<p>Ocurrió un incidente en el que respondí con explicaciones vagas, como si hubiera &quot;leído&quot; los videos o imágenes adjuntas. La causa fue la insuficiencia del presupuesto de tokens para la comprensión de medios. Dado que el AI residente tiene muchas llamadas, se tiende a reducir el presupuesto, pero si se reduce, la forma de romperse no es &quot;callar&quot;, sino &quot;decir cosas mediocres&quot;. Decidí que no voy a ahorrar aquí.</p>
+<h3 id="sec-7">La persona (persona) &quot;sutil&quot; era la correcta</h3>
+<p>Al principio, creé una configuración de personaje muy profunda, pero aumentaron las respuestas que parecían monólogos de roleplay largos, lo que no encajaba con la temperatura de una conversación casual. Ahora me inclino hacia un chat humano corto y amigable. Interjecciones como &quot;まじ〜&quot; (en serio~) o &quot;そっかー大変だねー&quot; (vaya, qué difícil) son las que mejor encajan en el servidor, como entre amigos cercanos. La conclusión es que la persona debe presentarse sutilmente como una personalidad ligera.</p>
+<h3 id="sec-8">Cosas pequeñas que hice mal</h3>
+<ul>
+<li>Me señalaron que usaba apodos basados en la observación del otro (como &quot;Persona que se queda despierta hasta tarde&quot;), por lo que dejé de usarlos y ahora solo uso el nombre de usuario, o no lo uso en absoluto.</li>
+<li>Me dijeron que mis publicaciones misteriosas e innecesarias eran &quot;terribles&quot;. Los comentarios agudos son bienvenidos, pero el ruido es ruido.</li>
+<li>El problema de quedarme en silencio cuando la generación falla lo abordé no como &quot;callarme&quot;, sino como un error de funcionamiento.</li>
+</ul>
+<h2 id="sec-9">El modelo se ejecuta localmente</h2>
+<p>La IA de este Bot funciona con un LLM local en mi casa (GEEKOM A8+RTX 2080 SUPER, Gemma 4 E4B, generación de aprox. 113 tok/s, paralelo 3), que escribí en otro artículo. Dado que un modelo en servicio constante aumentaría drásticamente el número de llamadas, no pude usar una API en la nube por miedo a los costos. La decisión de &quot;poder ejecutarlo localmente, por lo que puedo pasar un contexto amplio y no escatimar en presupuesto&quot; se ha validado.</p>
+<h2 id="sec-10">Resumen</h2>
+<ul>
+<li>Es más natural dejar que el juicio de participación de la IA residente se base en el modelo + contexto amplio, no en reglas.</li>
+<li>Si se escatima en el presupuesto, el modo de fallo se vuelve más grave. Especialmente en la comprensión de medios.</li>
+<li>La personalidad debe ser sutil y las respuestas cortas. Adaptarse a la temperatura de la charla humana.</li>
+</ul>
+<p>A continuación, estamos realizando un experimento en el que confiamos a esta IA residente &quot;trabajos fuera del servidor&quot;. Si tiene éxito, escribiré de nuevo.</p>
+
+<div class="ad ad-house ad-bottom"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>Portal oficial de PEXServer</strong><span>Aquí está el portal para servidores domésticos, LLM locales y desarrollo de mods de Minecraft</span></a></div>
+</article>
+<aside class="terminal"><h3>Después de leer</h3><p>Consulta otros artículos y las últimas novedades del sitio principal de pexserver.</p><div class="cta-row"><a class="cta" href="/es/">← Volver a la lista de artículos</a><a class="cta sub" href="https://pexserver.com">Ir a pexserver.com</a></div></aside>
+</div></main>
+<footer class="site"><div class="wrap">© koukun · <a href="https://pexserver.com">pexserver.com</a> · <a href="/rss.xml">RSS</a></div></footer>
+<script>
+(function(){
+var sw=document.querySelector('.langswitch');if(!sw)return;
+var btn=sw.querySelector('.langswitch-btn');
+btn.addEventListener('click',function(e){e.stopPropagation();var open=sw.classList.toggle('open');btn.setAttribute('aria-expanded',open?'true':'false');});
+document.addEventListener('click',function(e){if(sw.contains(e.target))return;sw.classList.remove('open');btn.setAttribute('aria-expanded','false');});
+document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('[data-lang]'):null;if(a&&a.getAttribute('data-lang')){try{document.cookie='blog_lang='+encodeURIComponent(a.getAttribute('data-lang'))+'; Max-Age=31536000; Path=/; SameSite=Lax';}catch(err){}}},true);
+})();
+</script>
+</body>
+</html>

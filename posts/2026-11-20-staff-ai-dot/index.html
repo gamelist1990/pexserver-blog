@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="google-site-verification" content="T3W5juVTjd_LCSzzlewPS_wxTKiOVGeSOWgm8D9BCWk">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>常駐型AIエージェントをDiscord Botに実装したら、ルールで縛るのをやめた話｜Staff AI dotモード運用記 | PEXServer Blog</title>
+<meta name="description" content="呼んだときだけ答えるBotから、会話に常駐して自分で参加を判断するAIへ。固定クールダウンや条件トリガーを全部やめて、モデルに文脈を読ませる設計にした理由と運用の実感。">
+<link rel="canonical" href="https://blog.pexserver.com/posts/2026-11-20-staff-ai-dot/">
+<link rel="icon" type="image/webp" href="/assets/logo.webp">
+<meta property="og:title" content="常駐型AIエージェントをDiscord Botに実装したら、ルールで縛るのをやめた話｜Staff AI dotモード運用記 | PEXServer Blog">
+<meta property="og:description" content="呼んだときだけ答えるBotから、会話に常駐して自分で参加を判断するAIへ。固定クールダウンや条件トリガーを全部やめて、モデルに文脈を読ませる設計にした理由と運用の実感。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.pexserver.com/posts/2026-11-20-staff-ai-dot/">
+<meta property="og:image" content="https://blog.pexserver.com/assets/logo.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="常駐型AIエージェントをDiscord Botに実装したら、ルールで縛るのをやめた話｜Staff AI dotモード運用記 | PEXServer Blog">
+<meta name="twitter:description" content="呼んだときだけ答えるBotから、会話に常駐して自分で参加を判断するAIへ。固定クールダウンや条件トリガーを全部やめて、モデルに文脈を読ませる設計にした理由と運用の実感。">
+<meta name="twitter:image" content="https://blog.pexserver.com/assets/logo.webp">
+<link rel="alternate" hreflang="ja" href="https://blog.pexserver.com/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="en" href="https://blog.pexserver.com/en/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="zh" href="https://blog.pexserver.com/zh/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="ko" href="https://blog.pexserver.com/ko/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="es" href="https://blog.pexserver.com/es/posts/2026-11-20-staff-ai-dot/">
+<link rel="alternate" hreflang="x-default" href="https://blog.pexserver.com/posts/2026-11-20-staff-ai-dot/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"常駐型AIエージェントをDiscord Botに実装したら、ルールで縛るのをやめた話｜Staff AI dotモード運用記","description":"呼んだときだけ答えるBotから、会話に常駐して自分で参加を判断するAIへ。固定クールダウンや条件トリガーを全部やめて、モデルに文脈を読ませる設計にした理由と運用の実感。","datePublished":"2026-11-20","dateModified":"2026-11-20","author":{"@type":"Person","name":"koukunn","image":"https://api.pexserver.com/auth/icon/koukunn?v=1795152063301"},"image":"https://blog.pexserver.com/assets/logo.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.pexserver.com/posts/2026-11-20-staff-ai-dot/"},"url":"https://blog.pexserver.com/posts/2026-11-20-staff-ai-dot/","inLanguage":"ja","publisher":{"@type":"Organization","name":"PEXServer Blog","url":"https://blog.pexserver.com"}}</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5289532251579539" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light;--bg:#faf6ed;--panel:#fffcf6;--ink:#25282e;--muted:#68676a;--line:#dcdacf;--accent:#a7472b;--brand:#0b57d0;--radius:12px}
+*{box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;line-height:1.8}
+a{color:var(--brand)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px}
+/* header: title in the primary area (top-left), quiet nav top-right */
+header.site{border-bottom:1px solid var(--line);background:var(--panel)}
+header.site .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-top:18px;padding-bottom:16px;flex-wrap:wrap}
+.brandbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brandbox .logo-img{width:34px;height:34px;border-radius:9px;object-fit:cover;display:block;flex-shrink:0}
+.brandbox a.logo{color:var(--ink);text-decoration:none;font-weight:800;font-size:24px;letter-spacing:.02em}
+.brandbox a.logo span{color:var(--accent)}
+.brandbox p{color:var(--muted);margin:2px 0 0;font-size:13px;flex-basis:100%}
+nav.quiet{display:flex;gap:16px;font-size:13px;align-items:center;flex-wrap:wrap}
+nav.quiet a{color:var(--muted);text-decoration:none}
+nav.quiet a:hover{color:var(--accent)}
+/* language switcher (top-right) */
+.langswitch{position:relative;font-size:13px}
+.langswitch-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
+.langswitch-btn:hover{border-color:var(--accent)}
+.langswitch-btn .lang-self{color:var(--muted);font-weight:400;font-size:12px}
+.langswitch-menu{position:absolute;right:0;top:calc(100% + 6px);margin:0;padding:6px;min-width:232px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(37,40,46,.12);list-style:none;display:none;z-index:40}
+.langswitch.open .langswitch-menu{display:block}
+.langswitch-menu li .lang-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:13px}
+.langswitch-menu li a.lang-item:hover{background:var(--bg)}
+.langswitch-menu .lang-flag{font-size:17px;line-height:1}
+.langswitch-menu .lang-self{margin-left:auto;color:var(--muted);font-size:12px}
+.langswitch-menu li .lang-item.disabled{opacity:.45;cursor:not-allowed}
+main{padding:28px 0 8px}
+/* Gutenberg hero: featured post (primary, top-left) + quiet side box (top-right) */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:20px;align-items:stretch;margin-bottom:8px}
+@media (max-width:760px){.hero{grid-template-columns:1fr}}
+.sidebox{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.sidebox h3{margin:0 0 8px;font-size:13px;color:var(--accent);letter-spacing:.08em}
+.sidebox ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+.sidebox a{text-decoration:none}
+/* post cards flow diagonally down from the primary area */
+.post-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:0 0 16px}
+.post-card h2{margin:4px 0 6px;font-size:19px;line-height:1.5}
+.post-card h2 a{color:var(--ink);text-decoration:none}
+.post-card h2 a:hover{color:var(--accent)}
+.post-card p{color:var(--muted);margin:6px 0 0}
+.post-card.featured{border:2px solid var(--accent);padding:26px 28px}
+.post-card.featured h2{font-size:26px}
+.post-card.featured .kicker{color:var(--accent);font-weight:700;font-size:12px;letter-spacing:.12em}
+.meta{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:0 10px;font-size:12px;color:var(--muted);text-decoration:none;background:var(--panel)}
+.tag:hover{border-color:var(--accent);color:var(--accent)}
+.byline{display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-weight:600}
+.avatar{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;line-height:1}
+.avatar-img{width:22px;height:22px;border-radius:50%;object-fit:cover;display:inline-block}
+/* terminal area: strong CTA block in the bottom-right */
+.terminal{margin:36px 0 8px auto;max-width:520px;background:var(--ink);color:#faf6ed;border-radius:var(--radius);padding:22px 24px;text-align:left}
+.terminal h3{margin:0 0 6px;font-size:17px}
+.terminal p{margin:0 0 14px;color:#cfcbc2;font-size:13px}
+.terminal .cta-row{display:flex;gap:10px;flex-wrap:wrap}
+.terminal a.cta{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px}
+.terminal a.cta.sub{background:transparent;border:1px solid #faf6ed;color:#faf6ed}
+footer.site{border-top:1px solid var(--line);margin-top:28px}
+footer.site .wrap{padding-top:16px;padding-bottom:24px;color:var(--muted);font-size:13px}
+/* article page: title/byline in the primary area, content column below */
+article{max-width:760px}
+article h1{font-size:28px;line-height:1.45;margin:10px 0 6px}
+article h2{border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:38px}
+article img{max-width:100%;border-radius:8px}
+article table{border-collapse:collapse;background:var(--panel)}
+article th,article td{border:1px solid var(--line);padding:6px 10px}
+article code{background:#f0ead9;padding:2px 5px;border-radius:4px}
+article pre{background:var(--ink);color:#faf6ed;padding:14px;border-radius:8px;overflow:auto}
+article pre code{background:transparent;padding:0}
+article blockquote{border-left:4px solid var(--accent);margin:16px 0;padding:4px 16px;color:var(--muted);background:var(--panel)}
+/* Reserve space for every ad slot (AdSense and house ads share this frame)
+   so the article text does not jump when the creative loads (CLS). */
+.ad{margin:28px 0;border:1px dashed var(--accent);border-radius:var(--radius);padding:14px 16px;background:var(--panel);min-height:250px;display:flex;align-items:center;justify-content:center}
+.ad-house{flex-direction:column;gap:8px;text-align:center}
+.ad-house a{color:var(--ink);text-decoration:none;display:block}
+.ad-house span{display:block;color:var(--muted);font-size:13px}
+.ad-label{font-size:11px;color:var(--accent);letter-spacing:.1em;font-weight:700}
+.page-title{font-size:24px;margin:0 0 18px}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap"><div class="brandbox"><img class="logo-img" src="/assets/logo.webp" alt="PEXServer Blog"><a class="logo" href="/">PEXServer <span>Blog</span></a><p>自宅サーバー・ローカルLLM・Minecraft Mod開発の実測と記録</p></div><nav class="quiet"><a href="https://pexserver.com">pexserver.com</a><a href="/rss.xml">RSS</a><div class="langswitch"><button type="button" class="langswitch-btn" aria-haspopup="true" aria-expanded="false" aria-label="言語を切り替える / Change language">🇯🇵 <span>日本語</span> <span aria-hidden="true">▾</span></button><ul class="langswitch-menu"><li><a href="/posts/2026-11-20-staff-ai-dot/" data-lang="ja" hreflang="ja" class="lang-item"><span class="lang-flag">🇯🇵</span><span class="lang-name">日本語</span></a></li><li><a href="/en/posts/2026-11-20-staff-ai-dot/" data-lang="en" hreflang="en" class="lang-item"><span class="lang-flag">🇺🇸</span><span class="lang-name">英語</span></a></li><li><a href="/zh/posts/2026-11-20-staff-ai-dot/" data-lang="zh" hreflang="zh" class="lang-item"><span class="lang-flag">🇨🇳</span><span class="lang-name">中国語</span></a></li><li><a href="/ko/posts/2026-11-20-staff-ai-dot/" data-lang="ko" hreflang="ko" class="lang-item"><span class="lang-flag">🇰🇷</span><span class="lang-name">韓国語</span></a></li><li><a href="/es/posts/2026-11-20-staff-ai-dot/" data-lang="es" hreflang="es" class="lang-item"><span class="lang-flag">🇪🇸</span><span class="lang-name">スペイン語</span></a></li></ul></div></nav></div></header>
+<main><div class="wrap">
+<article>
+<p class="meta"><span>2026-11-20</span><span class="byline"><img class="avatar-img" src="https://api.pexserver.com/auth/icon/koukunn?v=1795152063301" alt="koukunn"><span class="byline-name">koukunn</span></span><span><a class="tag" href="/tags/Discord/">Discord</a> <a class="tag" href="/tags/Bot%E9%96%8B%E7%99%BA/">Bot開発</a> <a class="tag" href="/tags/%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%ABLLM/">ローカルLLM</a> <a class="tag" href="/tags/AI%E3%82%A8%E3%83%BC%E3%82%B8%E3%82%A7%E3%83%B3%E3%83%88/">AIエージェント</a> <a class="tag" href="/tags/%E9%81%8B%E7%94%A8/">運用</a></span></p>
+<h1>常駐型AIエージェントをDiscord Botに実装したら、ルールで縛るのをやめた話｜Staff AI dotモード運用記</h1>
+<div class="ad ad-house ad-top"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer 公式ポータル</strong><span>自宅サーバー・ローカルLLM・Minecraft Mod開発のポータルサイトはこちら</span></a></div>
+<h2 id="sec-1">結論を先に</h2>
+<ul>
+<li>自作Discord BotのAIを「呼ばれたら答える」から「常駐して、参加するかどうかを自分で判断する」形に作り替えた</li>
+<li>参加・リアクション・呼びかけ検知は、ルールや固定クールダウンで縛らず、<strong>直近の会話をモデルに読ませて判断</strong>させる</li>
+<li>人間でも、会話の流れを読まずに割り込まれたらムカつく。AIにも同じことを求めたら、こっちのほうが自然だった</li>
+</ul>
+<h2 id="sec-2">もとのBotは「命令応答型」だった</h2>
+<p>もともと運用していたのは、コマンドやメンションに反応して答える普通のBotでした。これはこれで便利ですが、雑談サーバーでは「会話の参加者」ではなく「置いてある道具」になります。</p>
+<p>目指したのは、最近よく見る常駐型エージェント（dot的なやつ）のように、サーバーに居て、空気を読んで、たまに口を挟んだりリアクションしたりする存在です。</p>
+<h2 id="sec-3">実装したもの</h2>
+<p>常駐モードでは、Botは直近25件の会話をモデルに渡し、「返信する / 一言コメントする / リアクションする / 何もしない」をモデル自身に選ばせます。しきい値はモデルの自己評価ベースで、返信は高め、リアクションは低めに設定しています。</p>
+<p>ポイントは、<strong>参加条件をコードに書かなかった</strong>ことです。最初の設計では「○分に1回まで」「このキーワードがあったら」みたいなルールを考えましたが、全部捨てました。人間の雑談はそんな規則で回っていないし、ルールで縛った参加はどうしても機械的に見えます。</p>
+<h2 id="sec-4">やってみて分かったこと</h2>
+<h3 id="sec-5">空気読みは、思ったよりモデルができる</h3>
+<p>文脈を25件渡すと、「今は二人が真剣な話をしているから入らない」「ネタが転がったから拾う」といった判断はかなりできます。逆に、文脈をケチって5件くらいにすると途端に的外れになります。<strong>検知の精度を上げたければ、まず渡す文脈を広げる</strong>。これは荒らし検知のような判定系でも同じで、見逃しを嫌うなら範囲を広げるのが正解でした。</p>
+<h3 id="sec-6">トークン予算をケチると、静かに壊れる</h3>
+<p>添付された動画や画像を「読んだつもり」で薄い説明を返す、という事故がありました。原因はメディア理解のトークン予算不足です。常駐AIは呼び出し回数が多いので予算を絞りたくなるのですが、絞ると壊れ方が「黙る」ではなく「いい加減なことを言う」になる。ここは節約しないと決めました。</p>
+<h3 id="sec-7">ペルソナは「薄く」が正解だった</h3>
+<p>最初はキャラ設定を濃く作り込んだのですが、長文のロールプレイ独白みたいな返信が増えて、雑談の温度と合わなくなりました。いまは短くフレンドリーな人間風チャットに寄せています。「まじ〜」「そっかー大変だねー」くらいの身内ノリの相槌が、サーバーでは一番馴染みます。ペルソナは軽い個性として薄く出す、が結論です。</p>
+<h3 id="sec-8">やらかした細かいこと</h3>
+<ul>
+<li>相手を様子から作ったあだ名（「夜更かしさん」みたいな）で呼んで本人に指摘された。以後、呼ぶなら表示名、基本は呼ばない</li>
+<li>意味のない謎の投稿をして「ひどい」と言われた。鋭いツッコミは歓迎されるけど、ノイズはノイズ</li>
+<li>生成が空振りしたときに無言になる問題は、「黙る」のではなく不具合として扱うようにした</li>
+</ul>
+<h2 id="sec-9">モデルはローカルで回している</h2>
+<p>このBotのAIは、別記事で書いた<a href="/posts/2026-11-20-geekom-a8-egpu/#sec-5">自宅のローカルLLM</a>（GEEKOM A8＋RTX 2080 SUPER、Gemma 4 E4B、生成約113 tok/s・並列3）で動いています。常駐型は呼び出し回数が桁違いに増えるので、クラウドAPIだったら料金が怖くてこの設計はできませんでした。「ローカルで回せるから、文脈を広く渡す・予算をケチらない」という判断が成立しています。</p>
+<h2 id="sec-10">まとめ</h2>
+<ul>
+<li>常駐AIの参加判断は、ルールではなくモデル＋広い文脈に任せるほうが自然</li>
+<li>予算をケチると壊れ方が悪質になる。特にメディア理解</li>
+<li>ペルソナは薄く、返信は短く。人間の雑談の温度に合わせる</li>
+</ul>
+<p>次は、この常駐AIに「サーバーの外の仕事」まで任せる実験をしています。うまくいったらまた書きます。</p>
+
+<div class="ad ad-house ad-bottom"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer 公式ポータル</strong><span>自宅サーバー・ローカルLLM・Minecraft Mod開発のポータルサイトはこちら</span></a></div>
+</article>
+<aside class="terminal"><h3>読み終わったら</h3><p>他の記事や、pexserver 本体サイトの最新情報もご覧ください。</p><div class="cta-row"><a class="cta" href="/">← 記事一覧へ</a><a class="cta sub" href="https://pexserver.com">pexserver.com へ</a></div></aside>
+</div></main>
+<footer class="site"><div class="wrap">© koukun · <a href="https://pexserver.com">pexserver.com</a> · <a href="/rss.xml">RSS</a></div></footer>
+<script>
+(function(){
+var sw=document.querySelector('.langswitch');if(!sw)return;
+var btn=sw.querySelector('.langswitch-btn');
+btn.addEventListener('click',function(e){e.stopPropagation();var open=sw.classList.toggle('open');btn.setAttribute('aria-expanded',open?'true':'false');});
+document.addEventListener('click',function(e){if(sw.contains(e.target))return;sw.classList.remove('open');btn.setAttribute('aria-expanded','false');});
+document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('[data-lang]'):null;if(a&&a.getAttribute('data-lang')){try{document.cookie='blog_lang='+encodeURIComponent(a.getAttribute('data-lang'))+'; Max-Age=31536000; Path=/; SameSite=Lax';}catch(err){}}},true);
+})();
+</script>
+</body>
+</html>

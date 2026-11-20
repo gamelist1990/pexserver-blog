@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="google-site-verification" content="T3W5juVTjd_LCSzzlewPS_wxTKiOVGeSOWgm8D9BCWk">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使用相同的RTX 2080 SUPER更换模型后能达到多少tok/s｜Gemma 4 E4B・Qwen 35B・Ornith 35B 实测对比 | PEXServer Blog</title>
+<meta name="description" content="GEEKOM A8＋RTX 2080 SUPER测试模型的实测总结。Gemma 4 E4B在生产环境中生成速度约为113 tok/s，35B级低于60生成速度。速度的决定因素">
+<link rel="canonical" href="https://blog.pexserver.com/zh/posts/2026-11-20-model-comparison-2080super/">
+<link rel="icon" type="image/webp" href="/assets/logo.webp">
+<meta property="og:title" content="使用相同的RTX 2080 SUPER更换模型后能达到多少tok/s｜Gemma 4 E4B・Qwen 35B・Ornith 35B 实测对比 | PEXServer Blog">
+<meta property="og:description" content="GEEKOM A8＋RTX 2080 SUPER测试模型的实测总结。Gemma 4 E4B在生产环境中生成速度约为113 tok/s，35B级低于60生成速度。速度的决定因素">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.pexserver.com/zh/posts/2026-11-20-model-comparison-2080super/">
+<meta property="og:image" content="https://blog.pexserver.com/assets/logo.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="使用相同的RTX 2080 SUPER更换模型后能达到多少tok/s｜Gemma 4 E4B・Qwen 35B・Ornith 35B 实测对比 | PEXServer Blog">
+<meta name="twitter:description" content="GEEKOM A8＋RTX 2080 SUPER测试模型的实测总结。Gemma 4 E4B在生产环境中生成速度约为113 tok/s，35B级低于60生成速度。速度的决定因素">
+<meta name="twitter:image" content="https://blog.pexserver.com/assets/logo.webp">
+<link rel="alternate" hreflang="ja" href="https://blog.pexserver.com/posts/2026-11-20-model-comparison-2080super/">
+<link rel="alternate" hreflang="en" href="https://blog.pexserver.com/en/posts/2026-11-20-model-comparison-2080super/">
+<link rel="alternate" hreflang="zh" href="https://blog.pexserver.com/zh/posts/2026-11-20-model-comparison-2080super/">
+<link rel="alternate" hreflang="ko" href="https://blog.pexserver.com/ko/posts/2026-11-20-model-comparison-2080super/">
+<link rel="alternate" hreflang="es" href="https://blog.pexserver.com/es/posts/2026-11-20-model-comparison-2080super/">
+<link rel="alternate" hreflang="x-default" href="https://blog.pexserver.com/posts/2026-11-20-model-comparison-2080super/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"使用相同的RTX 2080 SUPER更换模型后能达到多少tok/s｜Gemma 4 E4B・Qwen 35B・Ornith 35B 实测对比","description":"GEEKOM A8＋RTX 2080 SUPER测试模型的实测总结。Gemma 4 E4B在生产环境中生成速度约为113 tok/s，35B级低于60生成速度。速度的决定因素","datePublished":"2026-11-20","dateModified":"2026-11-20","author":{"@type":"Person","name":"koukunn","image":"https://api.pexserver.com/auth/icon/koukunn?v=1795152063301"},"image":"https://blog.pexserver.com/assets/logo.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.pexserver.com/zh/posts/2026-11-20-model-comparison-2080super/"},"url":"https://blog.pexserver.com/zh/posts/2026-11-20-model-comparison-2080super/","inLanguage":"zh","publisher":{"@type":"Organization","name":"PEXServer Blog","url":"https://blog.pexserver.com"}}</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5289532251579539" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light;--bg:#faf6ed;--panel:#fffcf6;--ink:#25282e;--muted:#68676a;--line:#dcdacf;--accent:#a7472b;--brand:#0b57d0;--radius:12px}
+*{box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;line-height:1.8}
+a{color:var(--brand)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px}
+/* header: title in the primary area (top-left), quiet nav top-right */
+header.site{border-bottom:1px solid var(--line);background:var(--panel)}
+header.site .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-top:18px;padding-bottom:16px;flex-wrap:wrap}
+.brandbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brandbox .logo-img{width:34px;height:34px;border-radius:9px;object-fit:cover;display:block;flex-shrink:0}
+.brandbox a.logo{color:var(--ink);text-decoration:none;font-weight:800;font-size:24px;letter-spacing:.02em}
+.brandbox a.logo span{color:var(--accent)}
+.brandbox p{color:var(--muted);margin:2px 0 0;font-size:13px;flex-basis:100%}
+nav.quiet{display:flex;gap:16px;font-size:13px;align-items:center;flex-wrap:wrap}
+nav.quiet a{color:var(--muted);text-decoration:none}
+nav.quiet a:hover{color:var(--accent)}
+/* language switcher (top-right) */
+.langswitch{position:relative;font-size:13px}
+.langswitch-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
+.langswitch-btn:hover{border-color:var(--accent)}
+.langswitch-btn .lang-self{color:var(--muted);font-weight:400;font-size:12px}
+.langswitch-menu{position:absolute;right:0;top:calc(100% + 6px);margin:0;padding:6px;min-width:232px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(37,40,46,.12);list-style:none;display:none;z-index:40}
+.langswitch.open .langswitch-menu{display:block}
+.langswitch-menu li .lang-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:13px}
+.langswitch-menu li a.lang-item:hover{background:var(--bg)}
+.langswitch-menu .lang-flag{font-size:17px;line-height:1}
+.langswitch-menu .lang-self{margin-left:auto;color:var(--muted);font-size:12px}
+.langswitch-menu li .lang-item.disabled{opacity:.45;cursor:not-allowed}
+main{padding:28px 0 8px}
+/* Gutenberg hero: featured post (primary, top-left) + quiet side box (top-right) */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:20px;align-items:stretch;margin-bottom:8px}
+@media (max-width:760px){.hero{grid-template-columns:1fr}}
+.sidebox{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.sidebox h3{margin:0 0 8px;font-size:13px;color:var(--accent);letter-spacing:.08em}
+.sidebox ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+.sidebox a{text-decoration:none}
+/* post cards flow diagonally down from the primary area */
+.post-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:0 0 16px}
+.post-card h2{margin:4px 0 6px;font-size:19px;line-height:1.5}
+.post-card h2 a{color:var(--ink);text-decoration:none}
+.post-card h2 a:hover{color:var(--accent)}
+.post-card p{color:var(--muted);margin:6px 0 0}
+.post-card.featured{border:2px solid var(--accent);padding:26px 28px}
+.post-card.featured h2{font-size:26px}
+.post-card.featured .kicker{color:var(--accent);font-weight:700;font-size:12px;letter-spacing:.12em}
+.meta{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:0 10px;font-size:12px;color:var(--muted);text-decoration:none;background:var(--panel)}
+.tag:hover{border-color:var(--accent);color:var(--accent)}
+.byline{display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-weight:600}
+.avatar{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;line-height:1}
+.avatar-img{width:22px;height:22px;border-radius:50%;object-fit:cover;display:inline-block}
+/* terminal area: strong CTA block in the bottom-right */
+.terminal{margin:36px 0 8px auto;max-width:520px;background:var(--ink);color:#faf6ed;border-radius:var(--radius);padding:22px 24px;text-align:left}
+.terminal h3{margin:0 0 6px;font-size:17px}
+.terminal p{margin:0 0 14px;color:#cfcbc2;font-size:13px}
+.terminal .cta-row{display:flex;gap:10px;flex-wrap:wrap}
+.terminal a.cta{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px}
+.terminal a.cta.sub{background:transparent;border:1px solid #faf6ed;color:#faf6ed}
+footer.site{border-top:1px solid var(--line);margin-top:28px}
+footer.site .wrap{padding-top:16px;padding-bottom:24px;color:var(--muted);font-size:13px}
+/* article page: title/byline in the primary area, content column below */
+article{max-width:760px}
+article h1{font-size:28px;line-height:1.45;margin:10px 0 6px}
+article h2{border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:38px}
+article img{max-width:100%;border-radius:8px}
+article table{border-collapse:collapse;background:var(--panel)}
+article th,article td{border:1px solid var(--line);padding:6px 10px}
+article code{background:#f0ead9;padding:2px 5px;border-radius:4px}
+article pre{background:var(--ink);color:#faf6ed;padding:14px;border-radius:8px;overflow:auto}
+article pre code{background:transparent;padding:0}
+article blockquote{border-left:4px solid var(--accent);margin:16px 0;padding:4px 16px;color:var(--muted);background:var(--panel)}
+/* Reserve space for every ad slot (AdSense and house ads share this frame)
+   so the article text does not jump when the creative loads (CLS). */
+.ad{margin:28px 0;border:1px dashed var(--accent);border-radius:var(--radius);padding:14px 16px;background:var(--panel);min-height:250px;display:flex;align-items:center;justify-content:center}
+.ad-house{flex-direction:column;gap:8px;text-align:center}
+.ad-house a{color:var(--ink);text-decoration:none;display:block}
+.ad-house span{display:block;color:var(--muted);font-size:13px}
+.ad-label{font-size:11px;color:var(--accent);letter-spacing:.1em;font-weight:700}
+.page-title{font-size:24px;margin:0 0 18px}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap"><div class="brandbox"><img class="logo-img" src="/assets/logo.webp" alt="PEXServer Blog"><a class="logo" href="/zh/">PEXServer <span>Blog</span></a><p>家庭服务器、本地LLM、Minecraft Mod开发的实测与记录</p></div><nav class="quiet"><a href="https://pexserver.com">pexserver.com</a><a href="/rss.xml">RSS</a><div class="langswitch"><button type="button" class="langswitch-btn" aria-haspopup="true" aria-expanded="false" aria-label="切换语言 / Change language">🇨🇳 <span>中文</span> <span class="lang-self">简体中文</span> <span aria-hidden="true">▾</span></button><ul class="langswitch-menu"><li><a href="/posts/2026-11-20-model-comparison-2080super/" data-lang="ja" hreflang="ja" class="lang-item"><span class="lang-flag">🇯🇵</span><span class="lang-name">日语</span></a></li><li><a href="/en/posts/2026-11-20-model-comparison-2080super/" data-lang="en" hreflang="en" class="lang-item"><span class="lang-flag">🇺🇸</span><span class="lang-name">英语</span></a></li><li><a href="/zh/posts/2026-11-20-model-comparison-2080super/" data-lang="zh" hreflang="zh" class="lang-item"><span class="lang-flag">🇨🇳</span><span class="lang-name">中文</span></a></li><li><a href="/ko/posts/2026-11-20-model-comparison-2080super/" data-lang="ko" hreflang="ko" class="lang-item"><span class="lang-flag">🇰🇷</span><span class="lang-name">韩语</span></a></li><li><a href="/es/posts/2026-11-20-model-comparison-2080super/" data-lang="es" hreflang="es" class="lang-item"><span class="lang-flag">🇪🇸</span><span class="lang-name">西班牙语</span></a></li></ul></div></nav></div></header>
+<main><div class="wrap">
+<article>
+<p class="meta"><span>2026-11-20</span><span class="byline"><img class="avatar-img" src="https://api.pexserver.com/auth/icon/koukunn?v=1795152063301" alt="koukunn"><span class="byline-name">koukunn</span></span><span><a class="tag" href="/zh/tags/%E6%9C%AC%E5%9C%B0LLM/">本地LLM</a> <a class="tag" href="/zh/tags/%E7%94%9F%E6%88%90%E5%BC%8FAI/">生成式AI</a> <a class="tag" href="/zh/tags/GEEKOM/">GEEKOM</a> <a class="tag" href="/zh/tags/eGPU/">eGPU</a> <a class="tag" href="/zh/tags/%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/">模型比较</a></span></p>
+<h1>使用相同的RTX 2080 SUPER更换模型后能达到多少tok/s｜Gemma 4 E4B・Qwen 35B・Ornith 35B 实测对比</h1>
+<div class="ad ad-house ad-top"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer 官方门户</strong><span>这里是家庭服务器、本地LLM和Minecraft模组开发的门户网站</span></a></div>
+<h2 id="sec-1">结论先行</h2>
+<ul>
+<li>在相同的 RTX 2080 SUPER（8GB VRAM）上更换了模型后，目前实际运行的是 <strong>Gemma 4 E4B（生成约113 tok/s，并行3）</strong></li>
+<li>35B级的 Qwen3.6-35B-A3B / Ornith-1.5-35B-A3B 在生成时 <strong>低于 60 tok/s</strong>。仅 prefill 时，Qwen 约为 1,174 tok/s，属于最快级别</li>
+<li>速度的关键不在于参数数量，而在于 <strong>量化位数、如何加载 MoE 以及是否有 MTP（投机解码）</strong></li>
+<li>2位量化也有代价。实际运行中出现了历史上下文崩溃</li>
+</ul>
+<p>上次我写了“使用迷你PC+二手eGPU使本地LLM达到实用水平的故事”。这次是续篇，是使用相同设备测试了各种模型的实测总结。</p>
+<h2 id="sec-2">首先声明：这不是严格的相同条件基准测试</h2>
+<p>所有数字均为在我的环境中实测的结果。但测试时间、引擎、并行数和上下文长度因模型而异。特别是 Qwen / Ornith 使用 MoE 专用引擎（RustingStrata），Gemma 系列使用 llama.cpp 的 CUDA 版本进行测试。因此，请将此表视为“在同一GPU、同一台桌子上实际运行的结果记录”，而非“基准测试排名表”。</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>量子化</th>
+<th>引擎</th>
+<th>生成 tok/s</th>
+<th>prefill tok/s</th>
+<th>上下文・并行</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Gemma 4 E4B（本番）</strong></td>
+<td>QAT UD-Q4_K_XL</td>
+<td>llama.cpp CUDA</td>
+<td><strong>约111〜113</strong></td>
+<td>2,803〜4,465</td>
+<td>128K、并行3</td>
+<td>MTP 适应 5..7</td>
+</tr>
+<tr>
+<td>Gemma 4 12B</td>
+<td>UD-Q3_K_XL</td>
+<td>llama.cpp CUDA</td>
+<td>约54</td>
+<td>约1,000</td>
+<td>128K、MTP有效</td>
+<td>12B级别中舒适</td>
+</tr>
+<tr>
+<td>Qwen3.6-35B-A3B</td>
+<td>IQ2_XXS（2比特）</td>
+<td>RustingStrata</td>
+<td>58.7</td>
+<td><strong>1,174</strong></td>
+<td>64K×2并行、MTP无</td>
+<td>VRAM 约7,134MiB</td>
+</tr>
+<tr>
+<td>Qwen3.6-35B-A3B</td>
+<td>UD-IQ3_XXS</td>
+<td>RustingStrata</td>
+<td>约47</td>
+<td>约860</td>
+<td>64K×2并行</td>
+<td>量化提高后变慢了</td>
+</tr>
+<tr>
+<td>Ornith-1.5-35B-A3B</td>
+<td>UD-IQ3_XXS</td>
+<td>RustingStrata</td>
+<td>约47</td>
+<td>约860</td>
+<td>64K×2并行</td>
+<td>与 Qwen 速度范围几乎相同</td>
+</tr>
+<tr>
+<td>Gemma 4 26B-A4B</td>
+<td>QAT</td>
+<td>llama.cpp CUDA</td>
+<td>34.5</td>
+<td>185</td>
+<td>128K</td>
+<td>26B时代的数字</td>
+</tr>
+<tr>
+<td>Gemma 4 E4B（eGPU引入前）</td>
+<td>QAT UD-Q4_K_XL</td>
+<td>Vulkan（780M内置GPU）</td>
+<td>约30</td>
+<td>约460</td>
+<td>—</td>
+<td>引入eGPU后提升约3.7倍</td>
+</tr>
+</tbody></table>
+<h2 id="sec-3">为什么 E4B 是生产环境的</h2>
+<p>Bot 同时处理 3 个请求。即使并行 3 个，E4B 也能维持约 113 tok/s 的生成速度。35B 级别的模型即使单线程生成也低于 60，并行则更低。决定聊天 Bot 体验的不是一次性处理长输入的 prefill，而是逐个返回的生成速度。即使 prefill 阶段 Qwen 获胜，如果回复慢就没有意义。</p>
+<p>尝试的顺序是 E4B → Qwen 35B → Ornith 35B → E4B（当前）。流程是被大模型吸引而更换，但最终因速度和稳定性而回归。</p>
+<div class="ad ad-house ad-middle"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer 官方门户</strong><span>这里是家庭服务器、本地LLM和Minecraft模组开发的门户网站</span></a></div>
+<h2 id="sec-4">35B级慢的原因：8GB VRAM 的壁垒</h2>
+<p>Qwen3.6-35B-A3B 采用 MoE（mixture-of-experts），设计为仅将使用的专家加载到 VRAM 中。即便如此，文件大小为 IQ2_XXS 的 10.68GB，VRAM 使用量也约为 7,134MiB，几乎达到了上限。</p>
+<p>如果尝试提高量化级别，IQ2_XS 为 11.69GB、IQ3_XXS 为 15.76GB、Q4_K_M 为 22.29GB，所有这些都无法适应 8GB。超出部分会被卸载到系统 RAM（而且是单通道 DDR5，约 45GB/s）。根据 Gemma 26B 的 CPU-MoE 卸载先例，prefill 速度下降到约 360 tok/s。这意味着在 Qwen 上提高量化级别，几乎等同于放弃了更换 Qwen 的动机——“prefill 超过 1,000”。</p>
+<p>在“提高量化级别”和“回到 E4B”的二选一中，我选择了回到 E4B。</p>
+<h2 id="sec-5">2位量子化的代价：历史上下文崩溃发生</h2>
+<p>在运行 Qwen IQ2_XXS 期间，2026-11-11 实际应用中发生了故障。Bot 重复了自己之前的发言，或者捏造了“已完成！”来报告未执行的绘图工具。排查结果显示，Bot 端和 API 路径正常，原因是模型侧。模型将对话历史模式作为“剧本的延续”进行了补全。</p>
+<p>作为对策，在 Bot 的提示词中增加了“历史不是剧本”、“禁止未执行的完成报告”的规则后，未再次发生。然而，根本问题在于量化的弱点。从实际应用中吸取的教训是，只看速度数字而盲目追求 2 位是危险的。</p>
+<h2 id="sec-6">调整设置没有提升</h2>
+<p>Strata 方面，专家缓存量（--cache-ram）设置为 512 是最优的，如果提高到 3,072，生成速度将从 66.8 → 27.5 tok/s 大幅恶化。电力限制 200W → 250W、块 6144 → 8192、线程 12 → 16，也都未超出约 860〜890 tok/s 的同一带宽范围，属于误差范围。</p>
+<p>也就是说，在这个配置中，几乎没有调整设置的空间了。要想更快，只能改变模型的选择，这是结论。</p>
+<h2 id="sec-7">总结：8GB VRAM 的选择方法</h2>
+<ul>
+<li>对于生成速度至关重要的聊天机器人用途，<strong>小型模型＋良好量化＋MTP</strong> 优于大型模型＋2比特量化</li>
+<li>对于 prefill 至关重要的用途（长文本一次性读取），Qwen 35B 的 1,174 tok/s 非常有吸引力。选择模型取决于用途</li>
+<li>如果要在 8GB 上运行 35B 级别模型，量化极限约为 IQ2_XXS，超出此范围将因卸载而损失速度</li>
+</ul>
+<p>接下来想测的是，基于相同的 Gemma 4 E4B 基础，提升了智能体性能的 Nemotron 3.5 Bolt E4B 在 CUDA 上的再测试。如果能在不降低速度的情况下提升智能水平，它将成为生产环境的替换候选。尚未测试，测试后我会再写。</p>
+
+<div class="ad ad-house ad-bottom"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer 官方门户</strong><span>这里是家庭服务器、本地LLM和Minecraft模组开发的门户网站</span></a></div>
+</article>
+<aside class="terminal"><h3>阅读完毕后</h3><p>请查看其他文章或 pexserver 主站的最新信息。</p><div class="cta-row"><a class="cta" href="/zh/">← 返回文章列表</a><a class="cta sub" href="https://pexserver.com">前往 pexserver.com</a></div></aside>
+</div></main>
+<footer class="site"><div class="wrap">© koukun · <a href="https://pexserver.com">pexserver.com</a> · <a href="/rss.xml">RSS</a></div></footer>
+<script>
+(function(){
+var sw=document.querySelector('.langswitch');if(!sw)return;
+var btn=sw.querySelector('.langswitch-btn');
+btn.addEventListener('click',function(e){e.stopPropagation();var open=sw.classList.toggle('open');btn.setAttribute('aria-expanded',open?'true':'false');});
+document.addEventListener('click',function(e){if(sw.contains(e.target))return;sw.classList.remove('open');btn.setAttribute('aria-expanded','false');});
+document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('[data-lang]'):null;if(a&&a.getAttribute('data-lang')){try{document.cookie='blog_lang='+encodeURIComponent(a.getAttribute('data-lang'))+'; Max-Age=31536000; Path=/; SameSite=Lax';}catch(err){}}},true);
+})();
+</script>
+</body>
+</html>

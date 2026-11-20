@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="google-site-verification" content="T3W5juVTjd_LCSzzlewPS_wxTKiOVGeSOWgm8D9BCWk">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>在Mini PC上外接二手GPU后，本地LLM达到了实用水平的故事｜GEEKOM A8＋AG02＋RTX 2080 SUPER 实测记录 | PEXServer Blog</title>
+<meta name="description" content="在 GEEKOM A8 上外接 AG02 和二手 RTX 2080 SUPER（总价 63,200円），实测本地 LLM。生成速度为 86〜116 tok/s，生产 Bot 运行速度约为 113 tok/s。">
+<link rel="canonical" href="https://blog.pexserver.com/zh/posts/2026-11-20-geekom-a8-egpu/">
+<link rel="icon" type="image/webp" href="/assets/logo.webp">
+<meta property="og:title" content="在Mini PC上外接二手GPU后，本地LLM达到了实用水平的故事｜GEEKOM A8＋AG02＋RTX 2080 SUPER 实测记录 | PEXServer Blog">
+<meta property="og:description" content="在 GEEKOM A8 上外接 AG02 和二手 RTX 2080 SUPER（总价 63,200円），实测本地 LLM。生成速度为 86〜116 tok/s，生产 Bot 运行速度约为 113 tok/s。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.pexserver.com/zh/posts/2026-11-20-geekom-a8-egpu/">
+<meta property="og:image" content="https://blog.pexserver.com/assets/logo.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="在Mini PC上外接二手GPU后，本地LLM达到了实用水平的故事｜GEEKOM A8＋AG02＋RTX 2080 SUPER 实测记录 | PEXServer Blog">
+<meta name="twitter:description" content="在 GEEKOM A8 上外接 AG02 和二手 RTX 2080 SUPER（总价 63,200円），实测本地 LLM。生成速度为 86〜116 tok/s，生产 Bot 运行速度约为 113 tok/s。">
+<meta name="twitter:image" content="https://blog.pexserver.com/assets/logo.webp">
+<link rel="alternate" hreflang="ja" href="https://blog.pexserver.com/posts/2026-11-20-geekom-a8-egpu/">
+<link rel="alternate" hreflang="en" href="https://blog.pexserver.com/en/posts/2026-11-20-geekom-a8-egpu/">
+<link rel="alternate" hreflang="zh" href="https://blog.pexserver.com/zh/posts/2026-11-20-geekom-a8-egpu/">
+<link rel="alternate" hreflang="ko" href="https://blog.pexserver.com/ko/posts/2026-11-20-geekom-a8-egpu/">
+<link rel="alternate" hreflang="es" href="https://blog.pexserver.com/es/posts/2026-11-20-geekom-a8-egpu/">
+<link rel="alternate" hreflang="x-default" href="https://blog.pexserver.com/posts/2026-11-20-geekom-a8-egpu/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"在Mini PC上外接二手GPU后，本地LLM达到了实用水平的故事｜GEEKOM A8＋AG02＋RTX 2080 SUPER 实测记录","description":"在 GEEKOM A8 上外接 AG02 和二手 RTX 2080 SUPER（总价 63,200円），实测本地 LLM。生成速度为 86〜116 tok/s，生产 Bot 运行速度约为 113 tok/s。","datePublished":"2026-11-20","dateModified":"2026-11-20","author":{"@type":"Person","name":"koukunn","image":"https://api.pexserver.com/auth/icon/koukunn?v=1795152063301"},"image":"https://blog.pexserver.com/assets/logo.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.pexserver.com/zh/posts/2026-11-20-geekom-a8-egpu/"},"url":"https://blog.pexserver.com/zh/posts/2026-11-20-geekom-a8-egpu/","inLanguage":"zh","publisher":{"@type":"Organization","name":"PEXServer Blog","url":"https://blog.pexserver.com"}}</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5289532251579539" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light;--bg:#faf6ed;--panel:#fffcf6;--ink:#25282e;--muted:#68676a;--line:#dcdacf;--accent:#a7472b;--brand:#0b57d0;--radius:12px}
+*{box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;line-height:1.8}
+a{color:var(--brand)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px}
+/* header: title in the primary area (top-left), quiet nav top-right */
+header.site{border-bottom:1px solid var(--line);background:var(--panel)}
+header.site .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-top:18px;padding-bottom:16px;flex-wrap:wrap}
+.brandbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brandbox .logo-img{width:34px;height:34px;border-radius:9px;object-fit:cover;display:block;flex-shrink:0}
+.brandbox a.logo{color:var(--ink);text-decoration:none;font-weight:800;font-size:24px;letter-spacing:.02em}
+.brandbox a.logo span{color:var(--accent)}
+.brandbox p{color:var(--muted);margin:2px 0 0;font-size:13px;flex-basis:100%}
+nav.quiet{display:flex;gap:16px;font-size:13px;align-items:center;flex-wrap:wrap}
+nav.quiet a{color:var(--muted);text-decoration:none}
+nav.quiet a:hover{color:var(--accent)}
+/* language switcher (top-right) */
+.langswitch{position:relative;font-size:13px}
+.langswitch-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
+.langswitch-btn:hover{border-color:var(--accent)}
+.langswitch-btn .lang-self{color:var(--muted);font-weight:400;font-size:12px}
+.langswitch-menu{position:absolute;right:0;top:calc(100% + 6px);margin:0;padding:6px;min-width:232px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(37,40,46,.12);list-style:none;display:none;z-index:40}
+.langswitch.open .langswitch-menu{display:block}
+.langswitch-menu li .lang-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:13px}
+.langswitch-menu li a.lang-item:hover{background:var(--bg)}
+.langswitch-menu .lang-flag{font-size:17px;line-height:1}
+.langswitch-menu .lang-self{margin-left:auto;color:var(--muted);font-size:12px}
+.langswitch-menu li .lang-item.disabled{opacity:.45;cursor:not-allowed}
+main{padding:28px 0 8px}
+/* Gutenberg hero: featured post (primary, top-left) + quiet side box (top-right) */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:20px;align-items:stretch;margin-bottom:8px}
+@media (max-width:760px){.hero{grid-template-columns:1fr}}
+.sidebox{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.sidebox h3{margin:0 0 8px;font-size:13px;color:var(--accent);letter-spacing:.08em}
+.sidebox ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+.sidebox a{text-decoration:none}
+/* post cards flow diagonally down from the primary area */
+.post-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:0 0 16px}
+.post-card h2{margin:4px 0 6px;font-size:19px;line-height:1.5}
+.post-card h2 a{color:var(--ink);text-decoration:none}
+.post-card h2 a:hover{color:var(--accent)}
+.post-card p{color:var(--muted);margin:6px 0 0}
+.post-card.featured{border:2px solid var(--accent);padding:26px 28px}
+.post-card.featured h2{font-size:26px}
+.post-card.featured .kicker{color:var(--accent);font-weight:700;font-size:12px;letter-spacing:.12em}
+.meta{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:0 10px;font-size:12px;color:var(--muted);text-decoration:none;background:var(--panel)}
+.tag:hover{border-color:var(--accent);color:var(--accent)}
+.byline{display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-weight:600}
+.avatar{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;line-height:1}
+.avatar-img{width:22px;height:22px;border-radius:50%;object-fit:cover;display:inline-block}
+/* terminal area: strong CTA block in the bottom-right */
+.terminal{margin:36px 0 8px auto;max-width:520px;background:var(--ink);color:#faf6ed;border-radius:var(--radius);padding:22px 24px;text-align:left}
+.terminal h3{margin:0 0 6px;font-size:17px}
+.terminal p{margin:0 0 14px;color:#cfcbc2;font-size:13px}
+.terminal .cta-row{display:flex;gap:10px;flex-wrap:wrap}
+.terminal a.cta{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px}
+.terminal a.cta.sub{background:transparent;border:1px solid #faf6ed;color:#faf6ed}
+footer.site{border-top:1px solid var(--line);margin-top:28px}
+footer.site .wrap{padding-top:16px;padding-bottom:24px;color:var(--muted);font-size:13px}
+/* article page: title/byline in the primary area, content column below */
+article{max-width:760px}
+article h1{font-size:28px;line-height:1.45;margin:10px 0 6px}
+article h2{border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:38px}
+article img{max-width:100%;border-radius:8px}
+article table{border-collapse:collapse;background:var(--panel)}
+article th,article td{border:1px solid var(--line);padding:6px 10px}
+article code{background:#f0ead9;padding:2px 5px;border-radius:4px}
+article pre{background:var(--ink);color:#faf6ed;padding:14px;border-radius:8px;overflow:auto}
+article pre code{background:transparent;padding:0}
+article blockquote{border-left:4px solid var(--accent);margin:16px 0;padding:4px 16px;color:var(--muted);background:var(--panel)}
+/* Reserve space for every ad slot (AdSense and house ads share this frame)
+   so the article text does not jump when the creative loads (CLS). */
+.ad{margin:28px 0;border:1px dashed var(--accent);border-radius:var(--radius);padding:14px 16px;background:var(--panel);min-height:250px;display:flex;align-items:center;justify-content:center}
+.ad-house{flex-direction:column;gap:8px;text-align:center}
+.ad-house a{color:var(--ink);text-decoration:none;display:block}
+.ad-house span{display:block;color:var(--muted);font-size:13px}
+.ad-label{font-size:11px;color:var(--accent);letter-spacing:.1em;font-weight:700}
+.page-title{font-size:24px;margin:0 0 18px}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap"><div class="brandbox"><img class="logo-img" src="/assets/logo.webp" alt="PEXServer Blog"><a class="logo" href="/zh/">PEXServer <span>Blog</span></a><p>家庭服务器、本地LLM、Minecraft Mod开发的实测与记录</p></div><nav class="quiet"><a href="https://pexserver.com">pexserver.com</a><a href="/rss.xml">RSS</a><div class="langswitch"><button type="button" class="langswitch-btn" aria-haspopup="true" aria-expanded="false" aria-label="切换语言 / Change language">🇨🇳 <span>中文</span> <span class="lang-self">简体中文</span> <span aria-hidden="true">▾</span></button><ul class="langswitch-menu"><li><a href="/posts/2026-11-20-geekom-a8-egpu/" data-lang="ja" hreflang="ja" class="lang-item"><span class="lang-flag">🇯🇵</span><span class="lang-name">日语</span></a></li><li><a href="/en/posts/2026-11-20-geekom-a8-egpu/" data-lang="en" hreflang="en" class="lang-item"><span class="lang-flag">🇺🇸</span><span class="lang-name">英语</span></a></li><li><a href="/zh/posts/2026-11-20-geekom-a8-egpu/" data-lang="zh" hreflang="zh" class="lang-item"><span class="lang-flag">🇨🇳</span><span class="lang-name">中文</span></a></li><li><a href="/ko/posts/2026-11-20-geekom-a8-egpu/" data-lang="ko" hreflang="ko" class="lang-item"><span class="lang-flag">🇰🇷</span><span class="lang-name">韩语</span></a></li><li><a href="/es/posts/2026-11-20-geekom-a8-egpu/" data-lang="es" hreflang="es" class="lang-item"><span class="lang-flag">🇪🇸</span><span class="lang-name">西班牙语</span></a></li></ul></div></nav></div></header>
+<main><div class="wrap">
+<article>
+<p class="meta"><span>2026-11-20</span><span class="byline"><img class="avatar-img" src="https://api.pexserver.com/auth/icon/koukunn?v=1795152063301" alt="koukunn"><span class="byline-name">koukunn</span></span><span><a class="tag" href="/zh/tags/%E6%9C%AC%E5%9C%B0LLM/">本地LLM</a> <a class="tag" href="/zh/tags/GEEKOM/">GEEKOM</a> <a class="tag" href="/zh/tags/eGPU/">eGPU</a> <a class="tag" href="/zh/tags/%E8%87%AA%E7%BB%84PC/">自组PC</a> <a class="tag" href="/zh/tags/%E7%94%9F%E6%88%90%E5%BC%8FAI/">生成式AI</a></span></p>
+<h1>在Mini PC上外接二手GPU后，本地LLM达到了实用水平的故事｜GEEKOM A8＋AG02＋RTX 2080 SUPER 实测记录</h1>
+<div class="ad ad-house ad-top"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer 官方门户</strong><span>这里是家庭服务器、本地LLM和Minecraft模组开发的门户网站</span></a></div>
+<h2 id="sec-1">结论先行</h2>
+<ul>
+<li>在迷你PC「GEEKOM A8」上外接了eGPUドック「AG02」和二手 RTX 2080 SUPER。总价 <strong>63,200円</strong></li>
+<li>本地LLM的生成速度<strong>最高约为116 tok/s</strong>，当前正在实际运行的模型约为 <strong>113 tok/s（并行3）</strong></li>
+<li>对于用于24小时本地运行我自己的 Discord Bot AI 的用途，已经摆脱了云API</li>
+</ul>
+<p>本文将通过实际测量来回答“外接二手GPU真的实用吗？”这个疑问。</p>
+<h2 id="sec-2">为什么做</h2>
+<p>我自制并运营了一个<a href="/zh/posts/2026-11-20-staff-ai-dot/#sec-9">在 Discord 服务器上常驻的 AI Bot</a>。最初我使用了云 API，但是：</p>
+<ul>
+<li>使用越多费用越高</li>
+<li>达到速率限制</li>
+<li>无法自由尝试模型和参数</li>
+</ul>
+<p>这些不满积累起来了。“既然要常时运行，我就想在<a href="/zh/posts/2026-11-20-staff-ai-dot/#sec-3">本地运行模型</a>”。因此我关注了放在桌子上的迷你 PC，GEEKOM A8。</p>
+<h2 id="sec-3">购买的物品</h2>
+<table>
+<thead>
+<tr>
+<th>品目</th>
+<th>价格</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Palit RTX 2080 SUPER X 8GB</td>
+<td>28,800円</td>
+<td>Amazon Renewed（翻新品）</td>
+</tr>
+<tr>
+<td>AG02（eGPU 坞站）</td>
+<td>34,400円</td>
+<td>USB4 / OCuLink 双兼容</td>
+</tr>
+<tr>
+<td><strong>总计</strong></td>
+<td><strong>63,200円</strong></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>选择的要点有3个。</p>
+<ol>
+<li><strong>优先 NVIDIA</strong>：本地 LLM 的生态系统大多基于 CUDA，遇到问题时的信息量有巨大差异</li>
+<li><strong>接受 VRAM 8GB</strong>：目的是试用，所以先从小规模开始</li>
+<li><strong>退货/保修条件</strong>：该个体可退货至 2027年1月底，卖家保修至少180天。二手 GPU 担心初期不良，因此优先考虑“即使不行也能退回”而不是“价格便宜”。</li>
+</ol>
+<h2 id="sec-4">GEEKOM A8 的条件</h2>
+<ul>
+<li>CPU: Ryzen 7 8845HS</li>
+<li>内存: 16GB × 1（DDR5-5600）※空闲插槽1</li>
+<li>连接: <strong>仅 USB4（40Gbps）。没有 OCuLink</strong></li>
+</ul>
+<p>由于没有 OCuLink，带宽上限为 USB4 的 40Gbps。这是最大的担忧点，但 LLM 推理属于“将模型加载到 VRAM 后，其余都在 GPU 内部完成”的类型处理，因此实际测试中并非致命的瓶颈（详见后文）。</p>
+<h2 id="sec-5">设置中完成的事项</h2>
+<ol>
+<li>将 2080 SUPER 安装到 AG02，并通过 USB4 连接到 A8</li>
+<li>导入 NVIDIA 驱动 580.178.04 + CUDA 12.4.131</li>
+<li>使用 CUDA 版本构建 llama.cpp 并进行推理</li>
+<li>风扇控制：在无头环境中，GPU 风扇不会转，容易因过热而崩溃，因此我自制了一个固定 50% 运行的常驻服务 → <strong>73℃稳定</strong></li>
+</ol>
+<p>第 4 点虽然不显眼但非常重要，如果要把外接 GPU “像服务器一样无人运行”，那么温度监控和风扇控制应该是首先解决的关键点。</p>
+<h2 id="sec-6">实测结果</h2>
+<p>这是使用 CUDA 版 llama.cpp 进行的测量。</p>
+<ul>
+<li><strong>生成速度：86.6 〜 115.9 tok/s</strong>（取决于模型和设置）</li>
+<li><strong>预填充（输入处理）：约 4,465 tok/s</strong></li>
+</ul>
+<p>目前，本生产 Bot 使用的配置如下。</p>
+<ul>
+<li>模型：Gemma 4 E4B</li>
+<li><strong>生成约 113 tok/s，并行 3 个请求</strong>正在运行</li>
+</ul>
+<p>对于聊天 Bot 的响应来说速度已经绰绰有余，体感上与云 API 时代没有区别。成本仅剩下电费。</p>
+<p>在尝试过的模型中，<a href="/zh/posts/2026-11-20-model-comparison-2080super/#sec-7">Gemma 4 12B</a>（非 QAT 的 UD-Q3_K_XL 量化）在 128K 上下文 + MTP 有效的情况下，约为 54 tok/s，对于 12B 级别来说相当舒适。“即使只有 8GB VRAM，也根据量化和模型选择，可以达到这个水平”是最大的收获。</p>
+<div class="ad ad-house ad-middle"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer 官方门户</strong><span>这里是家庭服务器、本地LLM和Minecraft模组开发的门户网站</span></a></div>
+<h2 id="sec-7">容易陷入的陷阱/注意事项</h2>
+<ul>
+<li><strong>内存为 16GB × 1张</strong>：用于将模型缓存到 RAM 的方式不够可靠。增加内存正在根据价格保留（不是非买不可的价格）。</li>
+<li><strong>A8 的 NPU 无法使用</strong>：芯片上有，但在 BIOS 中被禁用，操作系统看不到。即使启用，因为它属于当前运行时不支持的世代，因此在 LLM 用途上实际上不可依赖。</li>
+<li><strong>二手 GPU 有个体差异</strong>：风扇异响和线圈声是运气问题。因此，提前确认退货条件非常重要。</li>
+</ul>
+<h2 id="sec-8">总结：适合谁</h2>
+<ul>
+<li>适合人群：需要常时运行的自制Bot，或希望将API付费转化为固定成本（电费）的人。能够管理二手设备风险的人</li>
+<li>不适合人群：希望以最大性能运行最新大型模型的人（这种情况下直接购买新的GPU更合理）</li>
+</ul>
+<p>虽然“迷你PC+二手eGPU”这种组合有点奇怪，但总价略超6万日元就能拥有“自己的AI基础”，实际体验比想象中更舒适。</p>
+<p>下次我计划详细撰写模型比较的实际测试数据（哪个模型能达到多少 tok/s）。</p>
+
+<div class="ad ad-house ad-bottom"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer 官方门户</strong><span>这里是家庭服务器、本地LLM和Minecraft模组开发的门户网站</span></a></div>
+</article>
+<aside class="terminal"><h3>阅读完毕后</h3><p>请查看其他文章或 pexserver 主站的最新信息。</p><div class="cta-row"><a class="cta" href="/zh/">← 返回文章列表</a><a class="cta sub" href="https://pexserver.com">前往 pexserver.com</a></div></aside>
+</div></main>
+<footer class="site"><div class="wrap">© koukun · <a href="https://pexserver.com">pexserver.com</a> · <a href="/rss.xml">RSS</a></div></footer>
+<script>
+(function(){
+var sw=document.querySelector('.langswitch');if(!sw)return;
+var btn=sw.querySelector('.langswitch-btn');
+btn.addEventListener('click',function(e){e.stopPropagation();var open=sw.classList.toggle('open');btn.setAttribute('aria-expanded',open?'true':'false');});
+document.addEventListener('click',function(e){if(sw.contains(e.target))return;sw.classList.remove('open');btn.setAttribute('aria-expanded','false');});
+document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('[data-lang]'):null;if(a&&a.getAttribute('data-lang')){try{document.cookie='blog_lang='+encodeURIComponent(a.getAttribute('data-lang'))+'; Max-Age=31536000; Path=/; SameSite=Lax';}catch(err){}}},true);
+})();
+</script>
+</body>
+</html>

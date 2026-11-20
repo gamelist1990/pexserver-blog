@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="google-site-verification" content="T3W5juVTjd_LCSzzlewPS_wxTKiOVGeSOWgm8D9BCWk">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The story of building the entire Mod development environment for Minecraft Bedrock | The true cause of SDK, automated testing, and device crashes | PEXServer Blog</title>
+<meta name="description" content="I created a custom SDK for Bedrock client mods, and built an automated testing environment to run the Windows">
+<link rel="canonical" href="https://blog.pexserver.com/en/posts/2026-11-20-bedrock-sdk-dev/">
+<link rel="icon" type="image/webp" href="/assets/logo.webp">
+<meta property="og:title" content="The story of building the entire Mod development environment for Minecraft Bedrock | The true cause of SDK, automated testing, and device crashes | PEXServer Blog">
+<meta property="og:description" content="I created a custom SDK for Bedrock client mods, and built an automated testing environment to run the Windows">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.pexserver.com/en/posts/2026-11-20-bedrock-sdk-dev/">
+<meta property="og:image" content="https://blog.pexserver.com/assets/logo.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The story of building the entire Mod development environment for Minecraft Bedrock | The true cause of SDK, automated testing, and device crashes | PEXServer Blog">
+<meta name="twitter:description" content="I created a custom SDK for Bedrock client mods, and built an automated testing environment to run the Windows">
+<meta name="twitter:image" content="https://blog.pexserver.com/assets/logo.webp">
+<link rel="alternate" hreflang="ja" href="https://blog.pexserver.com/posts/2026-11-20-bedrock-sdk-dev/">
+<link rel="alternate" hreflang="en" href="https://blog.pexserver.com/en/posts/2026-11-20-bedrock-sdk-dev/">
+<link rel="alternate" hreflang="zh" href="https://blog.pexserver.com/zh/posts/2026-11-20-bedrock-sdk-dev/">
+<link rel="alternate" hreflang="ko" href="https://blog.pexserver.com/ko/posts/2026-11-20-bedrock-sdk-dev/">
+<link rel="alternate" hreflang="es" href="https://blog.pexserver.com/es/posts/2026-11-20-bedrock-sdk-dev/">
+<link rel="alternate" hreflang="x-default" href="https://blog.pexserver.com/posts/2026-11-20-bedrock-sdk-dev/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"The story of building the entire Mod development environment for Minecraft Bedrock | The true cause of SDK, automated testing, and device crashes","description":"I created a custom SDK for Bedrock client mods, and built an automated testing environment to run the Windows","datePublished":"2026-11-20","dateModified":"2026-11-20","author":{"@type":"Person","name":"koukunn","image":"https://api.pexserver.com/auth/icon/koukunn?v=1795152063301"},"image":"https://blog.pexserver.com/assets/logo.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.pexserver.com/en/posts/2026-11-20-bedrock-sdk-dev/"},"url":"https://blog.pexserver.com/en/posts/2026-11-20-bedrock-sdk-dev/","inLanguage":"en","publisher":{"@type":"Organization","name":"PEXServer Blog","url":"https://blog.pexserver.com"}}</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5289532251579539" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light;--bg:#faf6ed;--panel:#fffcf6;--ink:#25282e;--muted:#68676a;--line:#dcdacf;--accent:#a7472b;--brand:#0b57d0;--radius:12px}
+*{box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;line-height:1.8}
+a{color:var(--brand)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px}
+/* header: title in the primary area (top-left), quiet nav top-right */
+header.site{border-bottom:1px solid var(--line);background:var(--panel)}
+header.site .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-top:18px;padding-bottom:16px;flex-wrap:wrap}
+.brandbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brandbox .logo-img{width:34px;height:34px;border-radius:9px;object-fit:cover;display:block;flex-shrink:0}
+.brandbox a.logo{color:var(--ink);text-decoration:none;font-weight:800;font-size:24px;letter-spacing:.02em}
+.brandbox a.logo span{color:var(--accent)}
+.brandbox p{color:var(--muted);margin:2px 0 0;font-size:13px;flex-basis:100%}
+nav.quiet{display:flex;gap:16px;font-size:13px;align-items:center;flex-wrap:wrap}
+nav.quiet a{color:var(--muted);text-decoration:none}
+nav.quiet a:hover{color:var(--accent)}
+/* language switcher (top-right) */
+.langswitch{position:relative;font-size:13px}
+.langswitch-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
+.langswitch-btn:hover{border-color:var(--accent)}
+.langswitch-btn .lang-self{color:var(--muted);font-weight:400;font-size:12px}
+.langswitch-menu{position:absolute;right:0;top:calc(100% + 6px);margin:0;padding:6px;min-width:232px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(37,40,46,.12);list-style:none;display:none;z-index:40}
+.langswitch.open .langswitch-menu{display:block}
+.langswitch-menu li .lang-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:13px}
+.langswitch-menu li a.lang-item:hover{background:var(--bg)}
+.langswitch-menu .lang-flag{font-size:17px;line-height:1}
+.langswitch-menu .lang-self{margin-left:auto;color:var(--muted);font-size:12px}
+.langswitch-menu li .lang-item.disabled{opacity:.45;cursor:not-allowed}
+main{padding:28px 0 8px}
+/* Gutenberg hero: featured post (primary, top-left) + quiet side box (top-right) */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:20px;align-items:stretch;margin-bottom:8px}
+@media (max-width:760px){.hero{grid-template-columns:1fr}}
+.sidebox{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.sidebox h3{margin:0 0 8px;font-size:13px;color:var(--accent);letter-spacing:.08em}
+.sidebox ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+.sidebox a{text-decoration:none}
+/* post cards flow diagonally down from the primary area */
+.post-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:0 0 16px}
+.post-card h2{margin:4px 0 6px;font-size:19px;line-height:1.5}
+.post-card h2 a{color:var(--ink);text-decoration:none}
+.post-card h2 a:hover{color:var(--accent)}
+.post-card p{color:var(--muted);margin:6px 0 0}
+.post-card.featured{border:2px solid var(--accent);padding:26px 28px}
+.post-card.featured h2{font-size:26px}
+.post-card.featured .kicker{color:var(--accent);font-weight:700;font-size:12px;letter-spacing:.12em}
+.meta{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:0 10px;font-size:12px;color:var(--muted);text-decoration:none;background:var(--panel)}
+.tag:hover{border-color:var(--accent);color:var(--accent)}
+.byline{display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-weight:600}
+.avatar{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;line-height:1}
+.avatar-img{width:22px;height:22px;border-radius:50%;object-fit:cover;display:inline-block}
+/* terminal area: strong CTA block in the bottom-right */
+.terminal{margin:36px 0 8px auto;max-width:520px;background:var(--ink);color:#faf6ed;border-radius:var(--radius);padding:22px 24px;text-align:left}
+.terminal h3{margin:0 0 6px;font-size:17px}
+.terminal p{margin:0 0 14px;color:#cfcbc2;font-size:13px}
+.terminal .cta-row{display:flex;gap:10px;flex-wrap:wrap}
+.terminal a.cta{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px}
+.terminal a.cta.sub{background:transparent;border:1px solid #faf6ed;color:#faf6ed}
+footer.site{border-top:1px solid var(--line);margin-top:28px}
+footer.site .wrap{padding-top:16px;padding-bottom:24px;color:var(--muted);font-size:13px}
+/* article page: title/byline in the primary area, content column below */
+article{max-width:760px}
+article h1{font-size:28px;line-height:1.45;margin:10px 0 6px}
+article h2{border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:38px}
+article img{max-width:100%;border-radius:8px}
+article table{border-collapse:collapse;background:var(--panel)}
+article th,article td{border:1px solid var(--line);padding:6px 10px}
+article code{background:#f0ead9;padding:2px 5px;border-radius:4px}
+article pre{background:var(--ink);color:#faf6ed;padding:14px;border-radius:8px;overflow:auto}
+article pre code{background:transparent;padding:0}
+article blockquote{border-left:4px solid var(--accent);margin:16px 0;padding:4px 16px;color:var(--muted);background:var(--panel)}
+/* Reserve space for every ad slot (AdSense and house ads share this frame)
+   so the article text does not jump when the creative loads (CLS). */
+.ad{margin:28px 0;border:1px dashed var(--accent);border-radius:var(--radius);padding:14px 16px;background:var(--panel);min-height:250px;display:flex;align-items:center;justify-content:center}
+.ad-house{flex-direction:column;gap:8px;text-align:center}
+.ad-house a{color:var(--ink);text-decoration:none;display:block}
+.ad-house span{display:block;color:var(--muted);font-size:13px}
+.ad-label{font-size:11px;color:var(--accent);letter-spacing:.1em;font-weight:700}
+.page-title{font-size:24px;margin:0 0 18px}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap"><div class="brandbox"><img class="logo-img" src="/assets/logo.webp" alt="PEXServer Blog"><a class="logo" href="/en/">PEXServer <span>Blog</span></a><p>Measurements and records of home servers, local LLM, and Minecraft Mod development</p></div><nav class="quiet"><a href="https://pexserver.com">pexserver.com</a><a href="/rss.xml">RSS</a><div class="langswitch"><button type="button" class="langswitch-btn" aria-haspopup="true" aria-expanded="false" aria-label="Switch language / Change language">🇺🇸 <span>English</span> <span aria-hidden="true">▾</span></button><ul class="langswitch-menu"><li><a href="/posts/2026-11-20-bedrock-sdk-dev/" data-lang="ja" hreflang="ja" class="lang-item"><span class="lang-flag">🇯🇵</span><span class="lang-name">Japanese</span></a></li><li><a href="/en/posts/2026-11-20-bedrock-sdk-dev/" data-lang="en" hreflang="en" class="lang-item"><span class="lang-flag">🇺🇸</span><span class="lang-name">English</span></a></li><li><a href="/zh/posts/2026-11-20-bedrock-sdk-dev/" data-lang="zh" hreflang="zh" class="lang-item"><span class="lang-flag">🇨🇳</span><span class="lang-name">Chinese</span></a></li><li><a href="/ko/posts/2026-11-20-bedrock-sdk-dev/" data-lang="ko" hreflang="ko" class="lang-item"><span class="lang-flag">🇰🇷</span><span class="lang-name">Korean</span></a></li><li><a href="/es/posts/2026-11-20-bedrock-sdk-dev/" data-lang="es" hreflang="es" class="lang-item"><span class="lang-flag">🇪🇸</span><span class="lang-name">Spanish</span></a></li></ul></div></nav></div></header>
+<main><div class="wrap">
+<article>
+<p class="meta"><span>2026-11-20</span><span class="byline"><img class="avatar-img" src="https://api.pexserver.com/auth/icon/koukunn?v=1795152063301" alt="koukunn"><span class="byline-name">koukunn</span></span><span><a class="tag" href="/en/tags/Minecraft/">Minecraft</a> <a class="tag" href="/en/tags/Bedrock/">Bedrock</a> <a class="tag" href="/en/tags/Mod%20development/">Mod development</a> <a class="tag" href="/en/tags/C%2B%2B/">C++</a> <a class="tag" href="/en/tags/Automated%20testing/">Automated testing</a></span></p>
+<h1>The story of building the entire Mod development environment for Minecraft Bedrock | The true cause of SDK, automated testing, and device crashes</h1>
+<div class="ad ad-house ad-top"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer Official Portal</strong><span>Portal site for home servers, local LLM, and Minecraft mod development</span></a></div>
+<h2 id="sec-1">Conclusion first</h2>
+<ul>
+<li>We built and operate an SDK from scratch for creating client Mods for Minecraft Bedrock (Windows edition).</li>
+<li>We implemented a mechanism for tracking game updates using &quot;signature scanning + differential prediction.&quot;</li>
+<li>Testing involves setting up an environment on Linux to run the Windows version of the game headless and unattended, and utilizing an AI agent.</li>
+<li>The biggest challenge was crashes that only occurred on physical hardware, and the root cause was that &quot;the Mod&#39;s runtime was freeing memory allocated by the game&#39;s allocator.&quot;</li>
+</ul>
+<h2 id="sec-2">Why build a custom SDK</h2>
+<p>Official Bedrock client mod mechanisms are centered around server-side script APIs, meaning penetrating client-side drawing or input requires injecting a native DLL. While there are several existing SDKs, I decided to build my own, prioritizing fast version tracking and the API structure I want.</p>
+<p>The current SDK searches for function addresses by version using &quot;signatures&quot; (machine code patterns). Even if the game is updated, it can automatically track changes if the pattern remains.</p>
+<h2 id="sec-3">Version Tracking Mechanism</h2>
+<p>When a new version is released, what needs to be done is decided.</p>
+<ol>
+<li>Scan the new version&#39;s executable using the surrounding byte sequences of addresses known from the old version to find candidates.</li>
+<li>For those not found, predict the correct address based on the movement (delta) of nearby functions.</li>
+<li>Once all symbols are resolved, inject them and confirm functionality.</li>
+</ol>
+<p>For the most recent version compatibility, all 74 symbols were ported using this procedure. It&#39;s subtle, but we are freed from &quot;constantly staring at disassembly by hand.&quot; There are pitfalls, such as list-format address values being missed during scalar value rearrangement, or profile cache taking precedence over embedded data, leading to the situation where &quot;it doesn&#39;t work even though I fixed it&quot;; these are documented in the procedure manual.</p>
+<h2 id="sec-4">Automated Testing Environment: Running Windows version unattended on Linux</h2>
+<p>Since manually verifying Mod operation every time is limited, I also created a testing environment.</p>
+<ul>
+<li>Launching Windows version Bedrock via a compatibility layer on a Linux machine and running headless with a virtual display</li>
+<li>Scripting everything from DLL injection, server joining, executing commands via chat, to capturing screen screenshots</li>
+<li>Setting up a verification Bedrock server (BDS) on the same hardware allows unattended confirmation of a sequence of actions, such as joining, mining, and crafting</li>
+</ul>
+<p>This allows me to fully delegate &quot;fix, test, and leave evidence&quot; to an <a href="/en/posts/2026-11-20-staff-ai-dot/#sec-4">AI agent</a>. The operation is that humans just wake up in the morning and read the results.</p>
+<p>However, even if automated tests pass, it can crash on the actual hardware. The next topic is about that.</p>
+<div class="ad ad-house ad-middle"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer Official Portal</strong><span>Portal site for home servers, local LLM, and Minecraft mod development</span></a></div>
+<h2 id="sec-5">The true cause of the crash that only occurred on the actual machine</h2>
+<p>There was an issue where a certain Mod would always crash immediately after command execution on the actual Windows machine, but not reproduce in the automated testing environment (on a compatibility layer).</p>
+<p>The true cause was crossing memory allocators. When an internal game function &quot;returns an array of elements,&quot; that memory is allocated by the game&#39;s allocator. If the Mod&#39;s C++ runtime frees it normally, the heap gets corrupted and crashes. On the compatibility layer, it simply didn&#39;t surface, but on the actual machine, it was a landmine that guaranteed failure.</p>
+<p>The solution was to copy the contents of the returned array into a custom array and have the original buffer returned using the game&#39;s release function. This lesson—that &quot;ABIs returning containers via hidden return values are all landmines&quot;—was applied to all functions of the same form.</p>
+<p>The lesson is simple: <strong>passing automated tests and running on the actual machine are separate things</strong>. Therefore, we still perform final checks on the actual machine and do not state that automated test results &quot;are proven on the actual machine.&quot;</p>
+<h2 id="sec-6">What I am currently working on</h2>
+<p>The SDK is currently undergoing a complete overhaul, abandoning compatibility. The highlight is a plugin system where Mods can be written in TypeScript; the goal is that injecting a single DLL makes it a host, and Mods placed in a folder are automatically loaded. We are also progressing on adding custom items to the settings screen (mixing Mod settings into the game&#39;s settings UI) and official API implementation for key assignments.</p>
+<h2 id="sec-7">Summary</h2>
+<ul>
+<li>Following version updates is faster if it is systematized. The personalized reverse assembly work has been proceduralized.</li>
+<li>The automated testing environment is powerful, but there are always issues that only appear on actual hardware. Consider this as a separate premise.</li>
+<li>You must not free another person&#39;s allocator memory (obvious, but I mentioned it).</li>
+</ul>
+<p>I will continue writing about development on this blog.</p>
+
+<div class="ad ad-house ad-bottom"><span class="ad-label">PR</span><a href="https://pexserver.com"><strong>PEXServer Official Portal</strong><span>Portal site for home servers, local LLM, and Minecraft mod development</span></a></div>
+</article>
+<aside class="terminal"><h3>After reading</h3><p>Check out other articles and the latest information from the pexserver main site.</p><div class="cta-row"><a class="cta" href="/en/">← Back to article list</a><a class="cta sub" href="https://pexserver.com">To pexserver.com</a></div></aside>
+</div></main>
+<footer class="site"><div class="wrap">© koukun · <a href="https://pexserver.com">pexserver.com</a> · <a href="/rss.xml">RSS</a></div></footer>
+<script>
+(function(){
+var sw=document.querySelector('.langswitch');if(!sw)return;
+var btn=sw.querySelector('.langswitch-btn');
+btn.addEventListener('click',function(e){e.stopPropagation();var open=sw.classList.toggle('open');btn.setAttribute('aria-expanded',open?'true':'false');});
+document.addEventListener('click',function(e){if(sw.contains(e.target))return;sw.classList.remove('open');btn.setAttribute('aria-expanded','false');});
+document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('[data-lang]'):null;if(a&&a.getAttribute('data-lang')){try{document.cookie='blog_lang='+encodeURIComponent(a.getAttribute('data-lang'))+'; Max-Age=31536000; Path=/; SameSite=Lax';}catch(err){}}},true);
+})();
+</script>
+</body>
+</html>
